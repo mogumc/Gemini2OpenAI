@@ -1,11 +1,14 @@
-FROM alpine:3.19
+FROM gcr.io/distroless/static-debian12
 
-RUN apk add --no-cache ca-certificates
+ARG TARGETOS
+ARG TARGETARCH
 
-WORKDIR /app
+COPY gemini2openai-${TARGETOS}-${TARGETARCH} /gemini2openai
 
-COPY gemini2openai .
+ENV TZ=Asia/Shanghai
+
+USER nonroot:nonroot
 
 EXPOSE 8080
 
-ENTRYPOINT ["./gemini2openai"]
+ENTRYPOINT ["/gemini2openai"]

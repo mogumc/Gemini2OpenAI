@@ -1,0 +1,13 @@
+services:
+  gemini2openai:
+    image: ghcr.io/mogumc/gemini2openai:latest
+    container_name: gemini2openai
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      # 必需：替换为你的 Gemini API Key
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      # 可选：设置安全访问令牌
+      # - PROXY_API_KEY=your_token
+    restart: unless-stopped

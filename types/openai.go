@@ -25,23 +25,12 @@ type ChatCompletionRequest struct {
 
 // ChatMessage represents a message in the conversation.
 type ChatMessage struct {
-	Role       string      `json:"role"`
-	Content    interface{} `json:"content,omitempty"`
-	Name       string      `json:"name,omitempty"`
-	ToolCalls  []ToolCall  `json:"tool_calls,omitempty"`
-	ToolCallID string      `json:"tool_call_id,omitempty"`
-}
-
-// ContentPart represents a part of a multimodal content.
-type ContentPart struct {
-	Type     string      `json:"type"`
-	Text     string      `json:"text,omitempty"`
-	ImageURL *ImageURL   `json:"image_url,omitempty"`
-}
-
-// ImageURL represents an image URL.
-type ImageURL struct {
-	URL string `json:"url"`
+	Role             string      `json:"role"`
+	Content          interface{} `json:"content,omitempty"`
+	ReasoningContent string      `json:"reasoning_content,omitempty"`
+	Name             string      `json:"name,omitempty"`
+	ToolCalls        []ToolCall  `json:"tool_calls,omitempty"`
+	ToolCallID       string      `json:"tool_call_id,omitempty"`
 }
 
 // Tool represents a tool definition.
@@ -83,9 +72,9 @@ type ChatCompletionResponse struct {
 
 // Choice represents a completion choice.
 type Choice struct {
-	Index        int         `json:"index"`
-	Message      ChatMessage `json:"message"`
-	FinishReason string      `json:"finish_reason"`
+	Index        int          `json:"index"`
+	Message      ChatMessage  `json:"message"`
+	FinishReason *string      `json:"finish_reason"`
 }
 
 // Usage represents token usage.
@@ -113,7 +102,8 @@ type StreamChoice struct {
 
 // StreamDelta represents the delta in a streaming response.
 type StreamDelta struct {
-	Role    string     `json:"role,omitempty"`
-	Content string     `json:"content,omitempty"`
-	ToolCalls []ToolCall `json:"tool_calls,omitempty"`
+	Role             string     `json:"role,omitempty"`
+	Content          string     `json:"content,omitempty"`
+	ReasoningContent string     `json:"reasoning_content,omitempty"`
+	ToolCalls        []ToolCall `json:"tool_calls,omitempty"`
 }

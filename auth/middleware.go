@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"crypto/subtle"
+	"encoding/json"
 	"net/http"
 	"strings"
 )
@@ -17,24 +19,36 @@ func Middleware(apiKey string) func(http.Handler) http.Handler {
 
 			authHeader := r.Header.Get("Authorization")
 			if authHeader == "" {
-				http.Error(w, `{"error":{"message":"Missing Authorization header","type":"invalid_request_error"}}`, http.StatusUnauthorized)
+				writeAuthError(w, "Missing Authorization header")
 				return
 			}
 
 			// Extract Bearer token
 			parts := strings.SplitN(authHeader, " ", 2)
 			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
-				http.Error(w, `{"error":{"message":"Invalid Authorization header format","type":"invalid_request_error"}}`, http.StatusUnauthorized)
+				writeAuthError(w, "Invalid Authorization header format")
 				return
 			}
 
 			token := parts[1]
-			if token != apiKey {
-				http.Error(w, `{"error":{"message":"Invalid API key","type":"invalid_request_error"}}`, http.StatusUnauthorized)
+			if subtle.ConstantTimeCompare([]byte(token), []byte(apiKey)) != 1 {
+				writeAuthError(w, "Invalid API key")
 				return
 			}
 
 			next.ServeHTTP(w, r)
 		})
 	}
+}
+
+// writeAuthError sends a properly JSON-encoded 401 error.
+func writeAuthError(w http.ResponseWriter, msg string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusUnauthorized)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"error": map[string]string{
+			"message": msg,
+			"type":    "invalid_request_error",
+		},
+	})
 }
