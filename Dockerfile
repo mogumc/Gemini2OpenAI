@@ -3,7 +3,7 @@ FROM gcr.io/distroless/static-debian12
 ARG TARGETOS
 ARG TARGETARCH
 
-COPY gemini2openai-${TARGETOS}-${TARGETARCH} /gemini2openai
+COPY --chmod=755 gemini2openai-${TARGETOS}-${TARGETARCH} /gemini2openai
 
 ENV TZ=Asia/Shanghai
 
